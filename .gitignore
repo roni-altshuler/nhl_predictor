@@ -1,0 +1,14 @@
+.venv/
+__pycache__/
+*.py[cod]
+.mypy_cache/
+.ruff_cache/
+dist/
+outputs/
+*.pyz
+.env
+.env.*
+data/*
+!data/README.md
+!data/synthetic_teams.csv
+!data/synthetic-manifest.json
