@@ -33,7 +33,7 @@ python src/nhl_prototype.py \
   --output-dir outputs/synthetic-demo
 ```
 
-The command writes `evaluation.json` and `predictions.csv`. Both identify the input as a synthetic fixture. Their numbers demonstrate the software contract; **they are not NHL performance evidence**. Inputs and different prior results are protected from overwrite. An identical run may be repeated safely.
+The command writes `evaluation.json` and `predictions.csv`. The JSON report identifies the input as a synthetic fixture; the CSV contains per-game records. Their numbers demonstrate the software contract; **they are not NHL performance evidence**. Inputs and different prior results are protected from overwrite. An identical run may be repeated safely.
 
 ## How it works
 
