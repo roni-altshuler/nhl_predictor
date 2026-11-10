@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "datasetKind": "synthetic-contract-fixture",
+  "sourceUrl": null,
+  "sha256": "8282217d87f23344a6258524450027dba4764bd3c7723e837a0454450fc6911f",
+  "description": "Artificial AAA/BBB/CCC/DDD teams and outcomes generated solely for tests; not observed NHL results."
+}
