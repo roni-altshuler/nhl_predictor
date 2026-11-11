@@ -94,6 +94,19 @@ try {
     await more.click();await page.getByRole('navigation',{name:'More navigation'}).getByRole('link',{name:'Matchup lab'}).click();await page.getByRole('heading',{name:'Matchup lab',exact:true}).waitFor();assert.equal(await page.getByRole('dialog').isVisible(),false)
     await more.click();await page.getByRole('button',{name:'Close navigation'}).click();await more.click();await page.keyboard.press('Escape');await page.getByRole('link',{name:'Skip to content'}).focus();await page.keyboard.press('Enter');assert.equal(await main.evaluate(el=>el===document.activeElement),true);await noOverflow()
   })
+  await check('queued dialog close never steals focus after skip navigation',async()=>{
+    await page.setViewportSize({width:390,height:844});await go('#/lab')
+    for(let n=0;n<10;n++) {
+      const focused=await page.evaluate(async()=>{
+        const dialog=document.querySelector('dialog'),more=document.querySelector('.mobile-nav button'),skip=document.querySelector('.skip-link')
+        more.focus();dialog.showModal()
+        const closed=new Promise(resolve=>dialog.addEventListener('close',resolve,{once:true}))
+        dialog.close();skip.focus();skip.click();await closed
+        return document.activeElement===document.querySelector('main')
+      })
+      assert.equal(focused,true,'Focus remains in main after queued close event')
+    }
+  })
   await check('unavailable data fails closed and retry recovers',async()=>{
     expectedNetworkFailure=true;await page.route('**/data/demo.json',route=>route.fulfill({status:503,body:'unavailable'}));await go('#/accuracy');await page.getByRole('heading',{name:'The demonstration could not be loaded'}).waitFor();assert.equal(await main.locator('.stats-grid').count(),0);await axe('data-error');await page.screenshot({path:path.join(output,'data-error-390.png'),fullPage:true})
     await page.unroute('**/data/demo.json');await page.getByRole('button',{name:'Try again'}).click();await page.getByRole('heading',{name:'Track record',exact:true}).waitFor();expectedNetworkFailure=false
