@@ -7,17 +7,20 @@ import { chromium } from 'playwright'
 const require = createRequire(import.meta.url)
 const output = path.resolve(process.env.QA_OUTPUT_DIR || 'test-results')
 await mkdir(output, { recursive: true })
-const port = process.env.QA_PORT || '8891', base = process.env.QA_BASE_URL || `http://127.0.0.1:${port}`
-const server = process.env.QA_BASE_URL ? null : spawn(process.execPath, ['node_modules/vite/bin/vite.js', 'preview', '--host', '127.0.0.1', '--port', port, '--strictPort'], {stdio:'pipe'})
+const port = process.env.QA_PORT || '8891'
+const basePath = process.env.QA_BASE_PATH || '/'
+if (!['/', '/nhl_predictor/'].includes(basePath)) throw new Error('Unsupported QA base path')
+const base = (process.env.QA_BASE_URL || `http://127.0.0.1:${port}${basePath}`).replace(/\/$/, '')
+const server = process.env.QA_BASE_URL ? null : spawn(process.execPath, ['node_modules/vite/bin/vite.js', 'preview', '--host', '127.0.0.1', '--port', port, '--strictPort'], {stdio:'pipe',env:{...process.env,APP_BASE_PATH:basePath}})
 let browser, expectedNetworkFailure = false
-const results = [], errors = [], consoleErrors = [], badResponses = []
+const results = [], errors = [], consoleErrors = [], badResponses = [], escapedBaseRequests = []
 const check = async (name, task) => { await task(); results.push({name,status:'passed'}); console.log(`PASS ${name}`) }
 try {
   if (server) {
     let ready = false
     for (let n=0;n<100;n++) {
       if (server.exitCode !== null) throw new Error('QA preview server exited')
-      try { ready = (await fetch(base)).ok } catch { /* bounded local startup */ }
+      try { ready = (await fetch(`${base}/`)).ok } catch { /* bounded local startup */ }
       if (ready) break
       await new Promise(resolve=>setTimeout(resolve,100))
     }
@@ -29,6 +32,7 @@ try {
   page.setDefaultTimeout(10000)
   page.on('pageerror', e => errors.push(e.message))
   page.on('console',m=>{if(m.type()==='error'&&!expectedNetworkFailure)consoleErrors.push(m.text())})
+  page.on('request',request=>{const url=new URL(request.url()),expected=new URL(`${base}/`);if(url.origin===expected.origin&&!url.pathname.startsWith(expected.pathname))escapedBaseRequests.push(url.pathname)})
   page.on('response',r=>{if(r.status()>=400&&!expectedNetworkFailure)badResponses.push({url:r.url(),status:r.status()})})
   const go = async hash => { await page.goto("about:blank"); await page.goto(`${base}/${hash}`); await page.locator('main h1').waitFor(); if(!hash.includes('mode=actual')) await page.getByText('Opening the notebook',{exact:true}).waitFor({state:'hidden'}) }
   const main=page.locator('main')
@@ -36,6 +40,17 @@ try {
   const noOverflow=async()=>assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`No page overflow at ${page.viewportSize().width}`)
   const axe=async name=>{await page.addScriptTag({path:require.resolve('axe-core/axe.min.js')});const report=await page.evaluate(async()=>await window.axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21a','wcag21aa']}}));await writeFile(path.join(output,`axe-${name}.json`),JSON.stringify(report,null,2));assert.deepEqual(report.violations.map(v=>({id:v.id,nodes:v.nodes.map(n=>n.target)})),[],`Accessibility ${name}`)}
   await check('overview source boundary, version, record and assets',async()=>{await go('#/');assert.match(await main.innerText(),/4\s*\/8/);assert.match(await page.locator('.scope-band').innerText(),/Synthetic demonstration/);assert.ok(await page.getByTestId('build-version').getAttribute('title'));await countGames(4);await noOverflow();await axe('overview-desktop')})
+  await check('base path contains images, version, licensed runtime notices and static assets',async()=>{
+    const versionResponse=await page.request.get(`${base}/version.json`);assert.equal(versionResponse.status(),200)
+    const version=await versionResponse.json();assert.equal(version.commit,await page.getByTestId('build-version').getAttribute('title'));assert.equal(version.data,'synthetic-contract-fixture');assert.equal(version.basePath,new URL(`${base}/`).pathname);if(process.env.APP_COMMIT||process.env.GITHUB_SHA)assert.equal(version.commit,process.env.APP_COMMIT||process.env.GITHUB_SHA)
+    const markResponse=await page.request.get(`${base}/mark.svg`);assert.equal(markResponse.status(),200);assert.match(markResponse.headers()['content-type'],/image\/svg\+xml/);assert.equal(await markResponse.text(),await readFile('public/mark.svg','utf8'))
+    assert.equal(await page.locator('link[rel=icon]').getAttribute('href'),`${new URL(`${base}/`).pathname}mark.svg`)
+    const dataResponse=await page.request.get(`${base}/data/demo.json`);assert.equal(dataResponse.status(),200);assert.match(dataResponse.headers()['content-type'],/application\/json/);assert.equal(await dataResponse.text(),await readFile('public/data/demo.json','utf8'))
+    const imageState=await page.locator('img').evaluateAll(images=>images.map(img=>({src:img.getAttribute('src'),loaded:img.complete&&img.naturalWidth>0})))
+    assert.equal(imageState.length,2);assert.ok(imageState.every(img=>img.loaded&&img.src===`${new URL(`${base}/`).pathname}mark.svg`))
+    const licenses=page.getByRole('link',{name:'Dependency licenses',exact:true});assert.equal(await licenses.getAttribute('href'),`${new URL(`${base}/`).pathname}THIRD_PARTY_NOTICES.md`)
+    const noticeResponse=await page.request.get(new URL(await licenses.getAttribute('href'),base).href);assert.equal(noticeResponse.status(),200);assert.equal(await noticeResponse.text(),await readFile('public/THIRD_PARTY_NOTICES.md','utf8'))
+  })
   const routes=[['overview','#/'],['games','#/games'],['game','#/games/nhl%3A2024020008'],['teams','#/teams'],['team','#/teams/AAA'],['lab','#/lab'],['record','#/accuracy'],['method','#/method']]
   for(const width of [1440,768,390,320]) for(const [name,hash] of routes) await check(`responsive ${name} ${width}`,async()=>{await page.setViewportSize({width,height:width>800?1000:844});await go(hash);await noOverflow();await page.screenshot({path:path.join(output,`${name}-${width}.png`),fullPage:true});if(width===390)await axe(`${name}-mobile`)})
   await page.setViewportSize({width:1440,height:1000})
@@ -120,8 +135,8 @@ try {
     await page.goto("about:blank");await page.goto(`${base}/#/`);await page.getByRole('heading',{name:'Opening the notebook'}).waitFor();await page.screenshot({path:path.join(output,'loading-390.png'),fullPage:true});await page.getByRole('combobox',{name:'Data source',exact:true}).selectOption('actual');await page.getByRole('heading',{name:'Real NHL coverage is unavailable'}).waitFor();release();await page.unroute('**/data/demo.json');await page.waitForTimeout(100);await countGames(0)
     await page.getByRole('combobox',{name:'Data source',exact:true}).selectOption('demo');await page.getByRole('heading',{name:/Explore the game/}).waitFor();await countGames(4)
   })
-  await check('production browser has no JS errors, broken assets or unexpected console errors',async()=>{assert.deepEqual(errors,[]);assert.deepEqual(consoleErrors,[]);assert.deepEqual(badResponses,[])})
-  await writeFile(path.join(output,'summary.json'),JSON.stringify({status:'passed',base,browserVersion:browser.version(),checks:results.length,results,errors,consoleErrors,badResponses},null,2));console.log(`${results.length} browser checks passed`)
+  await check('production browser has no JS errors, broken assets or unexpected console errors',async()=>{assert.deepEqual(errors,[]);assert.deepEqual(consoleErrors,[]);assert.deepEqual(badResponses,[]);assert.deepEqual(escapedBaseRequests,[])})
+  await writeFile(path.join(output,'summary.json'),JSON.stringify({status:'passed',base,browserVersion:browser.version(),checks:results.length,results,errors,consoleErrors,badResponses,escapedBaseRequests},null,2));console.log(`${results.length} browser checks passed`)
 } catch(error) {
-  await writeFile(path.join(output,'summary.json'),JSON.stringify({status:'failed',results,error:String(error),errors,consoleErrors,badResponses},null,2));throw error
+  await writeFile(path.join(output,'summary.json'),JSON.stringify({status:'failed',results,error:String(error),errors,consoleErrors,badResponses,escapedBaseRequests},null,2));throw error
 } finally {if(browser)await browser.close();server?.kill('SIGTERM')}

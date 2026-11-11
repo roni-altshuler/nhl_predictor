@@ -4,6 +4,7 @@ on:
   push:
     branches: ["**"]
   pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -30,6 +31,18 @@ jobs:
         run: python scripts/verify_demo.py
 
   web:
+    name: web (${{ matrix.target }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: root
+            base: /
+          - target: pages
+            base: /nhl_predictor/
+    env:
+      APP_BASE_PATH: ${{ matrix.base }}
+      QA_BASE_PATH: ${{ matrix.base }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -60,3 +73,39 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Responsive production browser QA
         run: npm --prefix web run test:browser
+      - name: Upload the verified Pages build
+        if: >-
+          matrix.target == 'pages' &&
+          github.ref == 'refs/heads/main' &&
+          (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+          vars.NHL_PAGES_ENABLED == 'true'
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: web/dist
+          retention-days: 1
+
+  deploy-pages:
+    name: Deploy GitHub Pages
+    needs: [checks, web]
+    if: >-
+      github.ref == 'refs/heads/main' &&
+      (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+      vars.NHL_PAGES_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    concurrency:
+      group: github-pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Read the administrator-enabled Pages configuration
+        uses: actions/configure-pages@v5
+        with:
+          enablement: false
+      - name: Deploy the tested static artifact
+        id: deployment
+        uses: actions/deploy-pages@v4

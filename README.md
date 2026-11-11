@@ -15,7 +15,7 @@ Blue Line is an explorable hockey analysis prototype with a responsive React int
 | External data adapter | A provisional MoneyPuck-format CSV contract, tested against synthetic inputs |
 | Web interface | Game/day explorer, team profiles, matchup sandbox, cumulative/recent accuracy and coverage notes |
 | Actual NHL coverage | Unavailable; no verified real results, original forecast receipts or live feed |
-| Hosting | Deployment pending; no verified public website URL yet |
+| Hosting | GitHub Pages workflow prepared; administrator enablement and live verification pending |
 
 ## Explore the web app locally
 
@@ -43,7 +43,7 @@ npm --prefix web run preview
 # Open http://127.0.0.1:4173
 ```
 
-`web/dist/version.json` and the footer identify the build commit when built with `APP_COMMIT`, `VERCEL_GIT_COMMIT_SHA` or `GITHUB_SHA`; otherwise they say `local-preview`. The checked-in Vercel configuration describes the static build only. It does not create a hosting project or establish that a deployment is reachable. A public website link will be added after deployment and live browser verification.
+`web/dist/version.json` and the footer identify the build commit when built with `APP_COMMIT`, `VERCEL_GIT_COMMIT_SHA` or `GITHUB_SHA`; otherwise they say `local-preview`. The default build also supports a GitHub Pages project path. The Pages deployment job stays disabled until an administrator enables Pages and opts in; see [hosting setup and verification](docs/DEPLOYMENT.md). The existing Vercel configuration describes a static build only and does not grant account access. No public website URL is claimed until deployment and actual live browser verification.
 
 ## Offline evaluator quick start
 
@@ -145,7 +145,7 @@ python scripts/build.py
 python scripts/verify_demo.py
 ```
 
-The zip application is `dist/nhl-prototype.pyz` and accepts the same arguments as the source command. Generated outputs and build artifacts are ignored by Git. CI runs Python tests, lint, strict types, compilation and packaged-demo verification on Python 3.11, plus frontend tests, lint, strict types, production build, deterministic data check and responsive browser QA on Node.js 24. A passing CI run validates the included code and fixtures; it does not validate an external data corpus or a live product.
+The zip application is `dist/nhl-prototype.pyz` and accepts the same arguments as the source command. Generated outputs and build artifacts are ignored by Git. CI runs Python tests, lint, strict types, compilation and packaged-demo verification on Python 3.11, plus frontend tests, lint, strict types, production build, deterministic data check and responsive browser QA on Node.js 24 at both root and GitHub Pages project paths. A passing CI run validates the included code and fixtures; it does not validate an external data corpus or a live product.
 
 Tests cover stable identities, conflicting rows, unavailable outcomes, future and same-day leakage, scoring formulas, provenance hashes, reproducible CLI output and preservation of prior results. See [CONTRIBUTING.md](CONTRIBUTING.md) for the review process.
 
