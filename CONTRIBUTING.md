@@ -14,7 +14,7 @@ python -m compileall -q src tests scripts
 python scripts/verify_demo.py
 ```
 
-All applicable checks must pass on the final tree before committing or pushing. CI repeats them. The project has no browser UI or deployed service; browser interaction checks are not a substitute for CLI/data validation and are not currently applicable to a product UI.
+All applicable checks must pass on the final tree before committing or pushing. CI repeats them. The React interface also requires Node.js 24 and the locked dependencies: run `npm --prefix web ci`, then its `lint`, `typecheck`, `test` and `build` scripts. Run `python scripts/export_web_demo.py --check`. Install the pinned Playwright browser with `cd web && npx playwright install chromium`, then run `npm run test:browser`. Browser QA supplements CLI/data validation. After every deployment verify the live version, navigation, controls, data, loading/empty/error states, responsive layouts and browser errors; a successful build or deployment badge alone is insufficient.
 
 ## Pull requests
 

@@ -12,6 +12,14 @@ MoneyPuck publishes conditions for attributed noncommercial use on its [data pag
 
 ## Developer tools
 
-The runtime and test suite use Python's standard library. Optional developer requirements pin Ruff 0.8.6 and mypy 1.13.0, whose installed package metadata identifies MIT licenses. They are obtained separately from PyPI and are not redistributed as part of this repository. Their upstream licenses and those of their dependencies remain applicable.
+The Python evaluator and its tests use the standard library. Optional developer requirements pin Ruff 0.8.6 and mypy 1.13.0, whose installed package metadata identifies MIT licenses. They are obtained separately from PyPI and are not redistributed as part of this repository. Their upstream licenses and those of their dependencies remain applicable.
 
-There is no model artifact, external dataset, pretrained weight, or bundled third-party executable in the published tree.
+## Web runtime
+
+The web app uses React, React DOM, scheduler, TanStack React Query and TanStack Query Core, under their upstream MIT terms. The complete notices from the locked runtime packages are in [`web/public/THIRD_PARTY_NOTICES.md`](../web/public/THIRD_PARTY_NOTICES.md). These dependency rights permit their use and redistribution in a browser build; they do not assign a new project-wide license.
+
+The UI uses original code, CSS, an original SVG rink/mark and system fonts. It does not distribute league logos, player photos, team trademarks, NBA/NFL source code, third-party fonts or provider observations. Its checked-in report is derived only from the original artificial fixture. It makes no NHL affiliation claim.
+
+Frontend development tools are installed from the official npm registry using the lockfile and retain their upstream licenses. Axe Core's MPL-2.0 development package is used for local/CI accessibility checks and is not imported into the application bundle. Playwright browsers and test output are not committed or deployed.
+
+There is no trained model artifact, external dataset, pretrained weight, or bundled third-party executable in the published source tree.

@@ -1,0 +1,605 @@
+{
+  "asOfDate": "2025-07-01",
+  "attribution": "Synthetic contract fixtures, created for tests; not observed NHL results.",
+  "coverage": {
+    "coverageBasis": "Observed source rows only; expected schedule completeness is not verified.",
+    "dateGranularity": "Provider calendar date; no exact start or result-availability time.",
+    "eligibleRegularSeasonGames": 20,
+    "excludedGames": {
+      "after_as_of_date": 1,
+      "playoffs": 1,
+      "preseason": 1,
+      "tied_totals_outcome_unresolved": 1,
+      "unsettled_score": 1
+    },
+    "observedGameIds": 25,
+    "rawRows": 52,
+    "seasons": {
+      "2023": {
+        "eligibleGames": 12,
+        "exclusions": {},
+        "firstObservedDate": "2023-10-01",
+        "lastObservedDate": "2023-12-17",
+        "observedGames": 12,
+        "teamCodes": [
+          "AAA",
+          "BBB",
+          "CCC",
+          "DDD"
+        ]
+      },
+      "2024": {
+        "eligibleGames": 8,
+        "exclusions": {
+          "playoffs": 1,
+          "preseason": 1,
+          "tied_totals_outcome_unresolved": 1,
+          "unsettled_score": 1
+        },
+        "firstObservedDate": "2024-09-20",
+        "lastObservedDate": "2025-05-01",
+        "observedGames": 12,
+        "teamCodes": [
+          "AAA",
+          "BBB",
+          "CCC",
+          "DDD"
+        ]
+      },
+      "2025": {
+        "eligibleGames": 0,
+        "exclusions": {
+          "after_as_of_date": 1
+        },
+        "firstObservedDate": "2025-10-01",
+        "lastObservedDate": "2025-10-01",
+        "observedGames": 1,
+        "teamCodes": [
+          "AAA",
+          "DDD"
+        ]
+      }
+    },
+    "situations": {
+      "5on5": 2,
+      "all": 50
+    },
+    "winnerTarget": "Home/away winner only where mirrored all-situation goal totals are unequal."
+  },
+  "datasetKind": "synthetic-contract-fixture",
+  "genuinePreEventPublicationEvidence": false,
+  "holdoutGames": 8,
+  "holdoutStart": "2024-07-01",
+  "limitations": [
+    "Historical replay from later-acquired data; original availability/correction times are unknown.",
+    "Only this file's schema/counts are checked; official schedule completeness is not verified.",
+    "Manifest source identity is declared; a byte hash does not authenticate provider origin.",
+    "Only unequal mirrored goal totals are scored; no shootout outcome is invented from tied totals.",
+    "Excluding tied/unsettled totals changes the sample; this is not all-game NHL winner accuracy.",
+    "No odds comparison, betting-return estimate, tuning on the holdout or live provider integration.",
+    "Source team-code changes remain separate entities; franchise aliases are not inferred."
+  ],
+  "livePrediction": false,
+  "method": {
+    "coinFlip": 0.5,
+    "elo": {
+      "homeOffset": 0,
+      "initialRating": 1500,
+      "kFactor": 20,
+      "offseasonReset": false,
+      "scale": 400
+    },
+    "homeRate": "Beta(1,1) smoothed designated-home wins from eligible earlier dates only",
+    "intervalLimit": "Wilson accuracy interval is descriptive and ignores team/date dependence",
+    "neutralVenue": "Home is a source designation, not verified physical home advantage",
+    "pickRule": "Home if probability >= 0.5; otherwise away",
+    "units": "Accuracy fraction; binary Brier; natural-log loss clipped at 1e-15",
+    "updates": "Parameters fixed; both warmup and past holdout outcomes update state after each date"
+  },
+  "metrics": {
+    "coin_flip": {
+      "accuracy": 0.625,
+      "accuracyWilson95": [
+        0.30574239460262737,
+        0.8631557141764026
+      ],
+      "brier": 0.25,
+      "correct": 5,
+      "games": 8,
+      "logLoss": 0.6931471805599453
+    },
+    "elo": {
+      "accuracy": 0.5,
+      "accuracyWilson95": [
+        0.21521606221387757,
+        0.7847839377861224
+      ],
+      "brier": 0.25455251938158757,
+      "correct": 4,
+      "games": 8,
+      "logLoss": 0.702580127258375
+    },
+    "past_home_rate": {
+      "accuracy": 0.625,
+      "accuracyWilson95": [
+        0.30574239460262737,
+        0.8631557141764026
+      ],
+      "brier": 0.24803886247651252,
+      "correct": 5,
+      "games": 8,
+      "logLoss": 0.6916633205322305
+    }
+  },
+  "observedHoldoutHomeWinRate": 0.625,
+  "perSeasonHoldoutMetrics": {
+    "2024": {
+      "coin_flip": {
+        "accuracy": 0.625,
+        "accuracyWilson95": [
+          0.30574239460262737,
+          0.8631557141764026
+        ],
+        "brier": 0.25,
+        "correct": 5,
+        "games": 8,
+        "logLoss": 0.6931471805599453
+      },
+      "elo": {
+        "accuracy": 0.5,
+        "accuracyWilson95": [
+          0.21521606221387757,
+          0.7847839377861224
+        ],
+        "brier": 0.25455251938158757,
+        "correct": 4,
+        "games": 8,
+        "logLoss": 0.702580127258375
+      },
+      "past_home_rate": {
+        "accuracy": 0.625,
+        "accuracyWilson95": [
+          0.30574239460262737,
+          0.8631557141764026
+        ],
+        "brier": 0.24803886247651252,
+        "correct": 5,
+        "games": 8,
+        "logLoss": 0.6916633205322305
+      }
+    }
+  },
+  "records": [
+    {
+      "actualHomeWin": 1,
+      "awayGoals": 1,
+      "awayTeam": "BBB",
+      "coldStartAway": true,
+      "coldStartHome": true,
+      "date": "2023-10-01",
+      "gameId": "nhl:2023020001",
+      "homeGoals": 3,
+      "homeTeam": "AAA",
+      "homeWinProbability": {
+        "coin_flip": 0.5,
+        "elo": 0.5,
+        "past_home_rate": 0.5
+      },
+      "pastEligibleGames": 0,
+      "pastHomeWins": 0,
+      "phase": "warmup",
+      "seasonStartYear": 2023,
+      "sourceGameId": "2023020001"
+    },
+    {
+      "actualHomeWin": 0,
+      "awayGoals": 4,
+      "awayTeam": "DDD",
+      "coldStartAway": true,
+      "coldStartHome": true,
+      "date": "2023-10-08",
+      "gameId": "nhl:2023020002",
+      "homeGoals": 1,
+      "homeTeam": "CCC",
+      "homeWinProbability": {
+        "coin_flip": 0.5,
+        "elo": 0.5,
+        "past_home_rate": 0.6666666666666666
+      },
+      "pastEligibleGames": 1,
+      "pastHomeWins": 1,
+      "phase": "warmup",
+      "seasonStartYear": 2023,
+      "sourceGameId": "2023020002"
+    },
+    {
+      "actualHomeWin": 1,
+      "awayGoals": 1,
+      "awayTeam": "CCC",
+      "coldStartAway": false,
+      "coldStartHome": false,
+      "date": "2023-10-15",
+      "gameId": "nhl:2023020003",
+      "homeGoals": 2,
+      "homeTeam": "AAA",
+      "homeWinProbability": {
+        "coin_flip": 0.5,
+        "elo": 0.5287505638922686,
+        "past_home_rate": 0.5
+      },
+      "pastEligibleGames": 2,
+      "pastHomeWins": 1,
+      "phase": "warmup",
+      "seasonStartYear": 2023,
+      "sourceGameId": "2023020003"
+    },
+    {
+      "actualHomeWin": 1,
+      "awayGoals": 1,
+      "awayTeam": "BBB",
+      "coldStartAway": false,
+      "coldStartHome": false,
+      "date": "2023-10-22",
+      "gameId": "nhl:2023020004",
+      "homeGoals": 3,
+      "homeTeam": "DDD",
+      "homeWinProbability": {
+        "coin_flip": 0.5,
+        "elo": 0.5287505638922686,
+        "past_home_rate": 0.6
+      },
+      "pastEligibleGames": 3,
+      "pastHomeWins": 2,
+      "phase": "warmup",
+      "seasonStartYear": 2023,
+      "sourceGameId": "2023020004"
+    },
+    {
+      "actualHomeWin": 0,
+      "awayGoals": 4,
+      "awayTeam": "BBB",
+      "coldStartAway": false,
+      "coldStartHome": false,
+      "date": "2023-10-29",
+      "gameId": "nhl:2023020005",
+      "homeGoals": 1,
+      "homeTeam": "AAA",
+      "homeWinProbability": {
+        "coin_flip": 0.5,
+        "elo": 0.5556777487371204,
+        "past_home_rate": 0.6666666666666666
+      },
+      "pastEligibleGames": 4,
+      "pastHomeWins": 3,
+      "phase": "warmup",
+      "seasonStartYear": 2023,
+      "sourceGameId": "2023020005"
+    },
+    {
+      "actualHomeWin": 1,
+      "awayGoals": 1,
+      "awayTeam": "DDD",
+      "coldStartAway": false,
+      "coldStartHome": false,
+      "date": "2023-11-05",
+      "gameId": "nhl:2023020006",
+      "homeGoals": 2,
+      "homeTeam": "CCC",
+      "homeWinProbability": {
+        "coin_flip": 0.5,
+        "elo": 0.44432225126287966,
+        "past_home_rate": 0.5714285714285714
+      },
+      "pastEligibleGames": 5,
+      "pastHomeWins": 3,
+      "phase": "warmup",
+      "seasonStartYear": 2023,
+      "sourceGameId": "2023020006"
+    },
+    {
+      "actualHomeWin": 1,
+      "awayGoals": 1,
+      "awayTeam": "CCC",
+      "coldStartAway": false,
+      "coldStartHome": false,
+      "date": "2023-11-12",
+      "gameId": "nhl:2023020007",
+      "homeGoals": 3,
+      "homeTeam": "AAA",
+      "homeWinProbability": {
+        "coin_flip": 0.5,
+        "elo": 0.5239039926119223,
+        "past_home_rate": 0.625
+      },
+      "pastEligibleGames": 6,
+      "pastHomeWins": 4,
+      "phase": "warmup",
+      "seasonStartYear": 2023,
+      "sourceGameId": "2023020007"
+    },
+    {
+      "actualHomeWin": 0,
+      "awayGoals": 4,
+      "awayTeam": "BBB",
+      "coldStartAway": false,
+      "coldStartHome": false,
+      "date": "2023-11-19",
+      "gameId": "nhl:2023020008",
+      "homeGoals": 1,
+      "homeTeam": "DDD",
+      "homeWinProbability": {
+        "coin_flip": 0.5,
+        "elo": 0.5239039926119223,
+        "past_home_rate": 0.6666666666666666
+      },
+      "pastEligibleGames": 7,
+      "pastHomeWins": 5,
+      "phase": "warmup",
+      "seasonStartYear": 2023,
+      "sourceGameId": "2023020008"
+    },
+    {
+      "actualHomeWin": 1,
+      "awayGoals": 1,
+      "awayTeam": "BBB",
+      "coldStartAway": false,
+      "coldStartHome": false,
+      "date": "2023-11-26",
+      "gameId": "nhl:2023020009",
+      "homeGoals": 2,
+      "homeTeam": "AAA",
+      "homeWinProbability": {
+        "coin_flip": 0.5,
+        "elo": 0.5225309360452932,
+        "past_home_rate": 0.6
+      },
+      "pastEligibleGames": 8,
+      "pastHomeWins": 5,
+      "phase": "warmup",
+      "seasonStartYear": 2023,
+      "sourceGameId": "2023020009"
+    },
+    {
+      "actualHomeWin": 1,
+      "awayGoals": 1,
+      "awayTeam": "DDD",
+      "coldStartAway": false,
+      "coldStartHome": false,
+      "date": "2023-12-03",
+      "gameId": "nhl:2023020010",
+      "homeGoals": 3,
+      "homeTeam": "CCC",
+      "homeWinProbability": {
+        "coin_flip": 0.5,
+        "elo": 0.4774690639547068,
+        "past_home_rate": 0.6363636363636364
+      },
+      "pastEligibleGames": 9,
+      "pastHomeWins": 6,
+      "phase": "warmup",
+      "seasonStartYear": 2023,
+      "sourceGameId": "2023020010"
+    },
+    {
+      "actualHomeWin": 0,
+      "awayGoals": 4,
+      "awayTeam": "CCC",
+      "coldStartAway": false,
+      "coldStartHome": false,
+      "date": "2023-12-10",
+      "gameId": "nhl:2023020011",
+      "homeGoals": 1,
+      "homeTeam": "AAA",
+      "homeWinProbability": {
+        "coin_flip": 0.5,
+        "elo": 0.5498652174801528,
+        "past_home_rate": 0.6666666666666666
+      },
+      "pastEligibleGames": 10,
+      "pastHomeWins": 7,
+      "phase": "warmup",
+      "seasonStartYear": 2023,
+      "sourceGameId": "2023020011"
+    },
+    {
+      "actualHomeWin": 1,
+      "awayGoals": 1,
+      "awayTeam": "BBB",
+      "coldStartAway": false,
+      "coldStartHome": false,
+      "date": "2023-12-17",
+      "gameId": "nhl:2023020012",
+      "homeGoals": 2,
+      "homeTeam": "DDD",
+      "homeWinProbability": {
+        "coin_flip": 0.5,
+        "elo": 0.4924674762120583,
+        "past_home_rate": 0.6153846153846154
+      },
+      "pastEligibleGames": 11,
+      "pastHomeWins": 7,
+      "phase": "warmup",
+      "seasonStartYear": 2023,
+      "sourceGameId": "2023020012"
+    },
+    {
+      "actualHomeWin": 1,
+      "awayGoals": 1,
+      "awayTeam": "BBB",
+      "coldStartAway": false,
+      "coldStartHome": false,
+      "date": "2024-10-01",
+      "gameId": "nhl:2024020001",
+      "homeGoals": 2,
+      "homeTeam": "AAA",
+      "homeWinProbability": {
+        "coin_flip": 0.5,
+        "elo": 0.5486586124875392,
+        "past_home_rate": 0.6428571428571429
+      },
+      "pastEligibleGames": 12,
+      "pastHomeWins": 8,
+      "phase": "holdout",
+      "seasonStartYear": 2024,
+      "sourceGameId": "2024020001"
+    },
+    {
+      "actualHomeWin": 0,
+      "awayGoals": 3,
+      "awayTeam": "DDD",
+      "coldStartAway": false,
+      "coldStartHome": false,
+      "date": "2024-10-15",
+      "gameId": "nhl:2024020002",
+      "homeGoals": 1,
+      "homeTeam": "CCC",
+      "homeWinProbability": {
+        "coin_flip": 0.5,
+        "elo": 0.5087506329959477,
+        "past_home_rate": 0.6666666666666666
+      },
+      "pastEligibleGames": 13,
+      "pastHomeWins": 9,
+      "phase": "holdout",
+      "seasonStartYear": 2024,
+      "sourceGameId": "2024020002"
+    },
+    {
+      "actualHomeWin": 1,
+      "awayGoals": 2,
+      "awayTeam": "CCC",
+      "coldStartAway": false,
+      "coldStartHome": false,
+      "date": "2024-10-29",
+      "gameId": "nhl:2024020003",
+      "homeGoals": 4,
+      "homeTeam": "AAA",
+      "homeWinProbability": {
+        "coin_flip": 0.5,
+        "elo": 0.5458829689847277,
+        "past_home_rate": 0.625
+      },
+      "pastEligibleGames": 14,
+      "pastHomeWins": 9,
+      "phase": "holdout",
+      "seasonStartYear": 2024,
+      "sourceGameId": "2024020003"
+    },
+    {
+      "actualHomeWin": 1,
+      "awayGoals": 1,
+      "awayTeam": "BBB",
+      "coldStartAway": false,
+      "coldStartHome": false,
+      "date": "2024-11-12",
+      "gameId": "nhl:2024020004",
+      "homeGoals": 2,
+      "homeTeam": "DDD",
+      "homeWinProbability": {
+        "coin_flip": 0.5,
+        "elo": 0.5491571917968932,
+        "past_home_rate": 0.6470588235294118
+      },
+      "pastEligibleGames": 15,
+      "pastHomeWins": 10,
+      "phase": "holdout",
+      "seasonStartYear": 2024,
+      "sourceGameId": "2024020004"
+    },
+    {
+      "actualHomeWin": 0,
+      "awayGoals": 3,
+      "awayTeam": "BBB",
+      "coldStartAway": false,
+      "coldStartHome": false,
+      "date": "2024-11-26",
+      "gameId": "nhl:2024020005",
+      "homeGoals": 1,
+      "homeTeam": "AAA",
+      "homeWinProbability": {
+        "coin_flip": 0.5,
+        "elo": 0.5994958563173727,
+        "past_home_rate": 0.6666666666666666
+      },
+      "pastEligibleGames": 16,
+      "pastHomeWins": 11,
+      "phase": "holdout",
+      "seasonStartYear": 2024,
+      "sourceGameId": "2024020005"
+    },
+    {
+      "actualHomeWin": 1,
+      "awayGoals": 2,
+      "awayTeam": "DDD",
+      "coldStartAway": false,
+      "coldStartHome": false,
+      "date": "2024-12-10",
+      "gameId": "nhl:2024020006",
+      "homeGoals": 4,
+      "homeTeam": "CCC",
+      "homeWinProbability": {
+        "coin_flip": 0.5,
+        "elo": 0.4535529461683137,
+        "past_home_rate": 0.631578947368421
+      },
+      "pastEligibleGames": 17,
+      "pastHomeWins": 11,
+      "phase": "holdout",
+      "seasonStartYear": 2024,
+      "sourceGameId": "2024020006"
+    },
+    {
+      "actualHomeWin": 1,
+      "awayGoals": 1,
+      "awayTeam": "CCC",
+      "coldStartAway": false,
+      "coldStartHome": false,
+      "date": "2024-12-24",
+      "gameId": "nhl:2024020007",
+      "homeGoals": 2,
+      "homeTeam": "AAA",
+      "homeWinProbability": {
+        "coin_flip": 0.5,
+        "elo": 0.5390906680603068,
+        "past_home_rate": 0.65
+      },
+      "pastEligibleGames": 18,
+      "pastHomeWins": 12,
+      "phase": "holdout",
+      "seasonStartYear": 2024,
+      "sourceGameId": "2024020007"
+    },
+    {
+      "actualHomeWin": 0,
+      "awayGoals": 3,
+      "awayTeam": "BBB",
+      "coldStartAway": false,
+      "coldStartHome": false,
+      "date": "2025-01-07",
+      "gameId": "nhl:2024020008",
+      "homeGoals": 1,
+      "homeTeam": "DDD",
+      "homeWinProbability": {
+        "coin_flip": 0.5,
+        "elo": 0.5421856768474583,
+        "past_home_rate": 0.6666666666666666
+      },
+      "pastEligibleGames": 19,
+      "pastHomeWins": 13,
+      "phase": "holdout",
+      "seasonStartYear": 2024,
+      "sourceGameId": "2024020008"
+    }
+  ],
+  "schemaVersion": 1,
+  "source": {
+    "datasetKind": "synthetic-contract-fixture",
+    "description": "Artificial AAA/BBB/CCC/DDD teams and outcomes generated solely for tests; not observed NHL results.",
+    "schemaVersion": 1,
+    "sha256": "8282217d87f23344a6258524450027dba4764bd3c7723e837a0454450fc6911f",
+    "sourceUrl": null
+  },
+  "status": "evaluated",
+  "verifiedMarketAdvantage": false,
+  "warmupGames": 12
+}

@@ -28,3 +28,35 @@ jobs:
         run: python -m compileall -q src tests scripts
       - name: Build and verify packaged demo
         run: python scripts/verify_demo.py
+
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+      - name: Install locked web dependencies
+        run: npm --prefix web ci
+      - name: Verify deterministic synthetic snapshot
+        run: python scripts/export_web_demo.py --check
+      - name: Web lint
+        run: npm --prefix web run lint
+      - name: Web strict types
+        run: npm --prefix web run typecheck
+      - name: Web tests
+        run: npm --prefix web test
+      - name: Production build
+        run: npm --prefix web run build
+        env:
+          APP_COMMIT: ${{ github.sha }}
+      - name: Install pinned browser
+        working-directory: web
+        run: npx playwright install --with-deps chromium
+      - name: Responsive production browser QA
+        run: npm --prefix web run test:browser

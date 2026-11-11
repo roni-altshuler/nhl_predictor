@@ -12,3 +12,7 @@ data/*
 !data/README.md
 !data/synthetic_teams.csv
 !data/synthetic-manifest.json
+web/node_modules/
+web/dist/
+web/.cache/
+web/test-results/
